@@ -18,12 +18,17 @@ class DetectFraudUseCase
         $reader = $this->readerResolver->resolve($source);
 
         $suspiciousReadings = [];
-        $groupedReadings = $reader->getReadingsGroupedByClient($source);
+        $clientReadings = $reader->getReadingsGroupedByClient($source);
 
         // Process line by line grouped by client without loading all file in memory
-        foreach ($groupedReadings as $readings) {
-            $suspicious = $this->fraudDetector->detect($readings);
-            $suspiciousReadings = array_merge($suspiciousReadings, $suspicious);
+        foreach ($clientReadings as $readings) {
+            try {
+                $suspicious = $this->fraudDetector->detect($readings);
+                $suspiciousReadings = array_merge($suspiciousReadings, $suspicious);
+            } catch (\Throwable) {
+                // TODO: Log the error or include it as error summary in the response
+                continue;
+            }
         }
 
         return $suspiciousReadings;

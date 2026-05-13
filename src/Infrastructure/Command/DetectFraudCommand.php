@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'app:detect-fraud', description: 'Detects suspicious readings.')]
 class DetectFraudCommand extends Command
 {
-    public function __construct(private DetectFraudUseCase $useCase)
+    public function __construct(private DetectFraudUseCase $detectFraudUseCase)
     {
         parent::__construct();
     }
@@ -38,7 +38,7 @@ class DetectFraudCommand extends Command
             return Command::FAILURE;
         }
 
-        $suspiciousReadings = $this->useCase->execute($source);
+        $suspiciousReadings = $this->detectFraudUseCase->execute($source);
 
         if ($format === 'csv') {
             $output->writeln('Client,Month,Suspicious,Median');

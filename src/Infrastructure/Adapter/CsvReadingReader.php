@@ -36,6 +36,8 @@ class CsvReadingReader implements ReadingReaderInterface
 
             [$clientId, $period, $value] = $data;
             
+            //TODO: Apply validation rules here
+            
             if ($currentClientId !== null && $clientId !== $currentClientId) {
                 yield $currentClientId => $clientReadings;
                 $clientReadings = [];
