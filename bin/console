@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+use App\Application\UseCase\DetectFraudUseCase;
+use App\Domain\Service\FraudDetector;
+use App\Infrastructure\Adapter\CsvReadingReader;
+use App\Infrastructure\Adapter\XmlReadingReader;
+use App\Infrastructure\Command\DetectFraudCommand;
+use App\Infrastructure\Resolver\ReaderResolver;
+use Symfony\Component\Console\Application;
+
+$fraudDetector = new FraudDetector();
+$readers = [new CsvReadingReader(), new XmlReadingReader()];
+$readerResolver = new ReaderResolver($readers);
+$useCase = new DetectFraudUseCase($readerResolver, $fraudDetector);
+
+$application = new Application('Fraud Detector', '1.0.0');
+$application->add(new DetectFraudCommand($useCase));
+$application->run();
